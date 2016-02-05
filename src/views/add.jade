@@ -1,0 +1,24 @@
+html
+	head
+		title add new user
+	body
+		h1 Sign up, and become part of the family!
+		a(href='/') home
+		br
+		br
+		form(action='/newuser' method='post')
+			label New user: 
+			br
+			br
+			input(type='text' name='firstName' placeholder='what is your first name?')
+			br
+			br
+			input(type='text' name='lastName' placeholder='last name please')
+			br
+			br
+			input(type='text' name='eMail' placeholder='here your email')
+			br
+			br
+			input(type='submit' value='add user')
+			br
+			br

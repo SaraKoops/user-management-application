@@ -1,0 +1,11 @@
+html
+	head
+	body
+		h1 User management application, list of users:
+		each user in users
+			h2= user.firstname + ' ' + user.lastname
+
+		a(href='/search') search user
+		br
+		a(href='/add') new user
+
