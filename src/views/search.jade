@@ -1,5 +1,8 @@
+
 html
 	head
+		script(src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js")
+		script(src="/main.js")
 		title search users
 	body
 		h1 Search for users
@@ -9,10 +12,12 @@ html
 		form(action='/searchresult' method='post')
 			label Name user: 
 			br
-			input(type='text' name='userName' placeholder='type here')
-			br
+			input#search(type='text' name='userName' placeholder='type your name here')
+			h2#result
 			input(type='submit' value='search')
 			br
 			br
+
+
 			
 			

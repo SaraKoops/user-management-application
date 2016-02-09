@@ -26,9 +26,18 @@ app.get('/', function(request, response){
 
 //create 2nd route wich renders search bar
 
-app.get('/search', function(request, response) {
+app.get('/search', function (request, response) {
+
 	response.render("search")
 });
+
+app.get('/searching', function (request, response){
+	
+	var val = request.query.search;
+ 	
+ 	console.log(val);
+	// response.send()
+})
 
 
 //create 3rd route which takes post request from search form
@@ -46,7 +55,7 @@ app.post('/searchresult', function(request, response) {
 
 		var matchUserName = [];
 
-		for (i = 0; i < parsedData.length -1; i++) {
+		for (i = 0; i < parsedData.length; i++) {
 
 			if (parsedData[i].firstname == userName || parsedData[i].lastname == userName) {
 					//pak het desbetreffende object en show me this
@@ -82,6 +91,8 @@ app.get('/add', function(request, response) {
 	response.render("add");
 });
 
+app.get('/')
+
 app.post('/newuser', function(request, response) {
 
 	var firstName = request.body.firstName;
@@ -91,7 +102,7 @@ app.post('/newuser', function(request, response) {
 	var newUser = {}
 	newUser.firstname = firstName
 	newUser.lastname = lastName
-	newUser.eMail = eMail
+	newUser.email = eMail
 
 	fs.readFile('./resources/users.json', function (err, data) {
 		
