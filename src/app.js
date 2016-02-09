@@ -8,6 +8,7 @@ var app = express ();
 app.set('views', 'src/views');
 app.set('view engine', 'jade');
 
+app.use(express.static('public')); // elk statische file dat je gebruikt leest ie uit de folder public.
 app.use(bodyParser.urlencoded({extended: true}));
 
 app.get('/', function(request, response){
@@ -33,10 +34,11 @@ app.get('/search', function (request, response) {
 
 app.get('/searching', function (request, response){
 	
-	var val = request.query.search;
+	var zoekterm = request.query.search;
  	
- 	console.log(val);
-	// response.send()
+ 	console.log(zoekterm);
+	
+	response.send('results')
 })
 
 
