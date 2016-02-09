@@ -32,14 +32,47 @@ app.get('/search', function (request, response) {
 	response.render("search")
 });
 
-app.get('/searching', function (request, response){
+app.get('/searching', function (request, response){ // ajax route for the autodisplay in searchbar
 	
 	var zoekterm = request.query.search;
  	
- 	console.log(zoekterm);
-	
-	response.send('results')
-})
+ 	// console.log(zoekterm);
+
+ 	fs.readFile('./resources/users.json', function (err, data) {
+		
+		var userlijst = JSON.parse(data); // dit is een array
+
+		console.log(userlijst);
+		console.log(zoekterm);
+
+		var corresponding = [];
+		// loop door de resultaten om overeenkomende eerste letter te vinden
+
+		for (i = 0; i < userlijst.length; i++) {
+
+			console.log("loop is running");
+
+			if (userlijst[i].firstname[0] == zoekterm || userlijst[i].lastname[0] == zoekterm) {
+					//pak de firstname of! lastname uit de array en daarvan de eerste letter
+					
+					corresponding.push(userlijst[i].firstname + " " + userlijst[i].lastname + "<br>");
+			}
+
+		};
+
+		console.log(corresponding);	
+
+		var results = ""
+
+			if (corresponding.length > 0){
+
+				results = corresponding
+			}		
+
+		response.send(results)
+
+	});
+});
 
 
 //create 3rd route which takes post request from search form
@@ -65,9 +98,9 @@ app.post('/searchresult', function(request, response) {
 					matchUserName.push(parsedData[i]);
 				}
 
-			}	
+		}	
 
-			var html = ""
+		var html = ""
 
 			if (matchUserName.length > 0){
 
@@ -78,9 +111,9 @@ app.post('/searchresult', function(request, response) {
 				html = "Oops, sorry! No matching users found."
 			}
 
-			response.send(html);
+		response.send(html);
 
-		});
+	});
 
 });
 
@@ -136,5 +169,3 @@ response.redirect('/');
 var server = app.listen(3000, function (){
 	console.log('Example app listening on port: ' + server.address().port);
 });
-
-

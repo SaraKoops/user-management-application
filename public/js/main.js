@@ -15,7 +15,7 @@ $(document).ready(function(){
 		   	success: function(data){ // callback function. De parameter krijgt de functie uit app.js file door callback functie.
 
 		   		console.log('testtesttest')
-				$('#results').html('tooter');
+				$('#results').html(data);
 	    	},
 
 	    	type: 'GET'
