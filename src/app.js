@@ -48,15 +48,41 @@ app.get('/searching', function (request, response){ // ajax route for the autodi
 		var corresponding = [];
 		// loop door de resultaten om overeenkomende eerste letter te vinden
 
+		var regzoekterm = '^'+zoekterm; // dakje --> matches beginning of input. zoekterm + '$', dan matched aan het einde van de input.
+		//omdat ik wil dat het match vanaf eerste letter maak ik nieuwe variable met ^. Die doe ik vervolgens in RegExp.
+			
+		var re = new RegExp(regzoekterm, 'gi'); // regular expression: patterns used to match character combinations in strings
+		// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp
+		// nieuw regular expression object
+			
 		for (i = 0; i < userlijst.length; i++) {
 
-			console.log("loop is running");
+			// console.log("loop is running");
+		
+			//if (userlijst[i].firstname[0] == zoekterm || userlijst[i].lastname[0] == zoekterm) {
 
-			if (userlijst[i].firstname[0] == zoekterm || userlijst[i].lastname[0] == zoekterm) {
-					//pak de firstname of! lastname uit de array en daarvan de eerste letter
-					
-					corresponding.push(userlijst[i].firstname + " " + userlijst[i].lastname + "<br>");
-			}
+			if (zoekterm == '') {
+				corresponding.push('<span style="color: #000000">' + userlijst[i].firstname + ' ' + userlijst[i].lastname + '</span><br>');
+				// als zoekterm spatie is dan push het naar array
+			
+			} else {
+				
+				
+				if(userlijst[i].firstname.match(re) || userlijst[i].lastname.match(re)) { // match https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/match
+						//pak de firstname of! lastname uit de array en daarvan de eerste letter
+
+						if(userlijst[i].firstname.match(re) && userlijst[i].lastname.match(re))
+							corresponding.push('<span style="color: #ff0000">'+userlijst[i].firstname + ' ' + userlijst[i].lastname + '</span><br>');
+						
+						else {
+								if(userlijst[i].lastname.match(re))
+								corresponding.push(userlijst[i].firstname + '<span style="color: #ff0000"> '+ userlijst[i].lastname + '</span><br>');
+
+								if(userlijst[i].firstname.match(re))	
+								corresponding.push('<span style="color: #ff0000">' + userlijst[i].firstname + '</span> ' + userlijst[i].lastname + '<br>');					
+						}
+				}
+			}	
 
 		};
 
