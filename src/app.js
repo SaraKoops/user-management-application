@@ -8,6 +8,7 @@ var app = express ();
 app.set('views', 'src/views');
 app.set('view engine', 'jade');
 
+app.use(express.static('public')); // elk statische file dat je gebruikt leest ie uit de folder public.
 app.use(bodyParser.urlencoded({extended: true}));
 
 app.get('/', function(request, response){
@@ -26,8 +27,77 @@ app.get('/', function(request, response){
 
 //create 2nd route wich renders search bar
 
-app.get('/search', function(request, response) {
+app.get('/search', function (request, response) {
+
 	response.render("search")
+});
+
+app.get('/searching', function (request, response){ // ajax route for the autodisplay in searchbar
+	
+	var zoekterm = request.query.search;
+ 	
+ 	// console.log(zoekterm);
+
+ 	fs.readFile('./resources/users.json', function (err, data) {
+		
+		var userlijst = JSON.parse(data); // dit is een array
+
+		console.log(userlijst);
+		console.log(zoekterm);
+
+		var corresponding = [];
+		// loop door de resultaten om overeenkomende eerste letter te vinden
+
+		var regzoekterm = '^'+zoekterm; // dakje --> matches beginning of input. zoekterm + '$', dan matched aan het einde van de input.
+		//omdat ik wil dat het match vanaf eerste letter maak ik nieuwe variable met ^. Die doe ik vervolgens in RegExp.
+			
+		var re = new RegExp(regzoekterm, 'gi'); // regular expression: patterns used to match character combinations in strings
+		// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp
+		// nieuw regular expression object
+			
+		for (i = 0; i < userlijst.length; i++) {
+
+			// console.log("loop is running");
+		
+			//if (userlijst[i].firstname[0] == zoekterm || userlijst[i].lastname[0] == zoekterm) {
+
+			if (zoekterm == '') {
+				corresponding.push('<span style="color: #000000">' + userlijst[i].firstname + ' ' + userlijst[i].lastname + '</span><br>');
+				// als zoekterm spatie is dan push het naar array
+			
+			} else {
+				
+				
+				if(userlijst[i].firstname.match(re) || userlijst[i].lastname.match(re)) { // match https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/match
+						//pak de firstname of! lastname uit de array en daarvan de eerste letter
+
+						if(userlijst[i].firstname.match(re) && userlijst[i].lastname.match(re))
+							corresponding.push('<span style="color: #ff0000">'+userlijst[i].firstname + ' ' + userlijst[i].lastname + '</span><br>');
+						
+						else {
+								if(userlijst[i].lastname.match(re))
+								corresponding.push(userlijst[i].firstname + '<span style="color: #ff0000"> '+ userlijst[i].lastname + '</span><br>');
+
+								if(userlijst[i].firstname.match(re))	
+								corresponding.push('<span style="color: #ff0000">' + userlijst[i].firstname + '</span> ' + userlijst[i].lastname + '<br>');					
+						}
+				}
+			}	
+
+		};
+
+		console.log(corresponding);	
+
+		var results = ""
+
+			if (corresponding.length > 0){
+
+				results = corresponding
+			}		
+
+		response.send(results)
+
+	});
 });
 
 
@@ -46,7 +116,7 @@ app.post('/searchresult', function(request, response) {
 
 		var matchUserName = [];
 
-		for (i = 0; i < parsedData.length -1; i++) {
+		for (i = 0; i < parsedData.length; i++) {
 
 			if (parsedData[i].firstname == userName || parsedData[i].lastname == userName) {
 					//pak het desbetreffende object en show me this
@@ -54,9 +124,9 @@ app.post('/searchresult', function(request, response) {
 					matchUserName.push(parsedData[i]);
 				}
 
-			}	
+		}	
 
-			var html = ""
+		var html = ""
 
 			if (matchUserName.length > 0){
 
@@ -67,9 +137,9 @@ app.post('/searchresult', function(request, response) {
 				html = "Oops, sorry! No matching users found."
 			}
 
-			response.send(html);
+		response.send(html);
 
-		});
+	});
 
 });
 
@@ -82,6 +152,8 @@ app.get('/add', function(request, response) {
 	response.render("add");
 });
 
+app.get('/')
+
 app.post('/newuser', function(request, response) {
 
 	var firstName = request.body.firstName;
@@ -91,7 +163,7 @@ app.post('/newuser', function(request, response) {
 	var newUser = {}
 	newUser.firstname = firstName
 	newUser.lastname = lastName
-	newUser.eMail = eMail
+	newUser.email = eMail
 
 	fs.readFile('./resources/users.json', function (err, data) {
 		
@@ -123,5 +195,3 @@ response.redirect('/');
 var server = app.listen(3000, function (){
 	console.log('Example app listening on port: ' + server.address().port);
 });
-
-
